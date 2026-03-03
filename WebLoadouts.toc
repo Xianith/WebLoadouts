@@ -1,0 +1,18 @@
+## Interface: 120000, 120001
+## Title: |cff00ccffWeb|r|cffffffffLoadouts|r
+## Notes: Import talent builds from Wowhead, Icy Veins, Archon and more - right from the talent screen.
+## Author: Claude & Friends
+## Version: 0.1.0
+## SavedVariables: WebLoadoutsDB
+## IconTexture: Interface\Icons\INV_Scroll_11
+## X-Category: Talents
+## X-Website: https://github.com/webloadouts
+## X-Curse-Project-ID:
+## X-WoWI-ID:
+
+Core.lua
+Storage.lua
+Data.lua
+ImportExport.lua
+UI.lua
+Config.lua
