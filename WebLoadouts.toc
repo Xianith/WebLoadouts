@@ -4,7 +4,7 @@
 ## Author: Claude & Friends
 ## Version: 0.1.0
 ## SavedVariables: WebLoadoutsDB
-## IconTexture: Interface\Icons\INV_Scroll_11
+## IconTexture: Interface\Icons\INV_Misc_Web_01
 ## X-Category: Talents
 ## X-Website: https://github.com/webloadouts
 ## X-Curse-Project-ID:
