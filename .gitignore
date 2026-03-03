@@ -3,6 +3,7 @@ WebLoadoutsDB.lua
 
 # Claude project files
 .claude/
+CLAUDE.md
 
 # OS files
 .DS_Store
