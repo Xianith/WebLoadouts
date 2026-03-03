@@ -1,0 +1,64 @@
+name: Sync Data.lua
+
+on:
+  # Triggered by wow.xianith.com/webloadouts via GitHub API
+  repository_dispatch:
+    types: [sync-data]
+
+  # Manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Data.lua
+        run: |
+          curl -fSL "https://wow.xianith.com/webloadouts/data.lua" -o Data.lua.new
+
+      - name: Validate download
+        run: |
+          # Ensure the file is non-empty and looks like valid Lua
+          if [ ! -s Data.lua.new ]; then
+            echo "Error: Downloaded file is empty"
+            exit 1
+          fi
+          if ! grep -q "WL.BundledBuilds" Data.lua.new; then
+            echo "Error: Downloaded file does not contain expected WL.BundledBuilds table"
+            exit 1
+          fi
+          echo "Validation passed"
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if cmp -s Data.lua Data.lua.new; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes detected"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Changes detected"
+          fi
+
+      - name: Update Data.lua
+        if: steps.diff.outputs.changed == 'true'
+        run: mv Data.lua.new Data.lua
+
+      - name: Commit and push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Data.lua
+          git commit -m "Update Data.lua from wow.xianith.com/webloadouts"
+          git push
+
+      - name: Clean up
+        if: steps.diff.outputs.changed == 'false'
+        run: rm -f Data.lua.new

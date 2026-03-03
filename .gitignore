@@ -4,11 +4,6 @@ WebLoadoutsDB.lua
 # Claude project files
 .claude/
 
-# Python scraper cache/artifacts
-__pycache__/
-*.pyc
-.playwright/
-
 # OS files
 .DS_Store
 Thumbs.db
