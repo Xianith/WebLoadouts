@@ -1,0 +1,10 @@
+package-as: WebLoadouts
+
+enable-nolib-creation: no
+
+ignore:
+    - .github
+    - .gitignore
+    - CLAUDE.md
+    - README.md
+    - logo.jpg
