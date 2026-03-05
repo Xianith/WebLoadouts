@@ -39,20 +39,6 @@ Talent build data is sourced from **[wow.xianith.com/webloadouts](https://wow.xi
 4. Hover to expand a source, pick a hero spec, and click a build
 5. The import dialog appears pre-filled — name it and click **Apply**
 
-### Slash Commands
-
-| Command | Description |
-|---|---|
-| `/wl` or `/wl help` | Show all commands |
-| `/wl show` | Info about accessing builds |
-| `/wl add` | Open the manual import dialog |
-| `/wl list` | List saved builds for current spec |
-| `/wl export` | Copy current build to clipboard |
-| `/wl delete <name>` | Delete a saved build |
-| `/wl clear` | Delete all saved builds |
-| `/wl settings` | View current settings |
-| `/wl debug` | Toggle debug messages |
-
 ### WebLoadout Tools
 
 Click **WebLoadout Tools** at the bottom of the loadout dropdown to open the tools panel:
