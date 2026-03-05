@@ -25,6 +25,15 @@ function WL:IsValidTalentString(talentString)
         return false, "String too long"
     end
 
+    -- Icy Veins HB hash format starts with #
+    if talentString:sub(1, 1) == "#" then
+        -- HB hash: alphanumeric plus # - : + ( )
+        if talentString:match("[^A-Za-z0-9#%-:+/=_()%|]") then
+            return false, "Invalid characters in HB hash string"
+        end
+        return true, nil
+    end
+
     -- Blizzard base64 variant: A-Z, a-z, 0-9, +, /
     if talentString:match("[^A-Za-z0-9%+/=]") then
         return false, "Invalid characters detected"
@@ -123,7 +132,7 @@ function WL:CopyToClipboard(text)
         f:SetSize(1, 1)
         f:SetPoint("TOPLEFT", -9999, 9999)
 
-        local editBox = CreateFrame("EditBox", "WebLoadoutsClipboard", f)
+        local editBox = CreateFrame("EditBox", nil, f)
         editBox:SetSize(1, 1)
         editBox:SetAutoFocus(false)
         editBox:SetScript("OnEscapePressed", function(eb) eb:ClearFocus() end)

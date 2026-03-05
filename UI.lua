@@ -65,9 +65,12 @@ end
 ----------------------------------------------------------------------
 
 function WL:OnLoadoutDropdownOpen(rootDescription)
-    self:UpdatePlayerInfo()
+    -- IMPORTANT: Do NOT call Blizzard APIs (GetSpecialization, UnitClass, etc.)
+    -- from inside this callback — it runs within the menu system's secure context
+    -- and will taint Blizzard UI state (e.g. CastingBarFrame barType).
+    -- Player info is already cached via PLAYER_LOGIN / PLAYER_SPECIALIZATION_CHANGED.
     local allBuilds = self:GetAllBuildsForCurrentSpec()
-    local sourceOrder = { "wowhead", "archon", "icyveins" }
+    local sourceOrder = { "wowhead", "archon", "icyveins", "murlok" }
 
     -- Separator before web builds section
     rootDescription:CreateDivider()
@@ -109,7 +112,9 @@ function WL:OnLoadoutDropdownOpen(rootDescription)
 
                     for _, build in ipairs(heroGroups[hero]) do
                         local btn = heroMenu:CreateButton(build.name, function()
-                            WL:ImportBuild(build, source)
+                            -- Defer import out of the menu's secure context to prevent taint
+                            local b, s = build, source
+                            C_Timer.After(0, function() WL:ImportBuild(b, s) end)
                             return MenuResponse and MenuResponse.CloseAll or nil
                         end)
                         AddBuildTooltip(btn, build, source, hero)
@@ -124,7 +129,8 @@ function WL:OnLoadoutDropdownOpen(rootDescription)
                 -- Add builds without hero spec directly under source
                 for _, build in ipairs(noHeroBuilds) do
                     local btn = submenu:CreateButton(build.name, function()
-                        WL:ImportBuild(build, source)
+                        local b, s = build, source
+                        C_Timer.After(0, function() WL:ImportBuild(b, s) end)
                         return MenuResponse and MenuResponse.CloseAll or nil
                     end)
                     AddBuildTooltip(btn, build, source, nil)
@@ -136,7 +142,7 @@ function WL:OnLoadoutDropdownOpen(rootDescription)
     -- WebLoadout Tools button at the bottom — opens standalone panel
     rootDescription:CreateDivider()
     local toolsBtn = rootDescription:CreateButton("|cff00ccffWebLoadout Tools|r", function()
-        WL:ShowToolsPanel()
+        C_Timer.After(0, function() WL:ShowToolsPanel() end)
         return MenuResponse and MenuResponse.CloseAll or nil
     end)
     toolsBtn:SetSelectionIgnored()
@@ -153,9 +159,21 @@ function WL:ImportBuild(build, source)
     end
 
     local buildName = build.name or "WebBuild"
+    local talentString = build.talentString
+
+    -- Detect Icy Veins HB hash format — Blizzard dialog can't parse these
+    if talentString:sub(1, 1) == "#" then
+        WL:Print("|cffff8800Warning:|r This build uses Icy Veins hash format which " ..
+            "cannot be directly imported in-game.")
+        if build.sourceUrl and build.sourceUrl ~= "" then
+            WL:Print("Visit the guide to copy the Blizzard-format string:")
+            WL:Print("|cff42a5f5" .. build.sourceUrl .. "|r")
+        end
+        return
+    end
 
     -- Always use the Blizzard import dialog — reliable and avoids taint
-    local success = self:ImportViaBuildDialog(build.talentString, buildName)
+    local success = self:ImportViaBuildDialog(talentString, buildName)
     if success then
         local srcInfo = source and WL.SourceInfo[source]
         local srcLabel = srcInfo and (" (" .. srcInfo.name .. ")") or ""
@@ -177,8 +195,8 @@ function WL:ShowToolsPanel()
         return
     end
 
-    local f = CreateFrame("Frame", "WebLoadoutsTools", UIParent, "BackdropTemplate")
-    f:SetSize(420, 380)
+    local f = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    f:SetSize(420, 440)
     f:SetPoint("CENTER")
     f:SetFrameStrata("FULLSCREEN_DIALOG")
     f:SetMovable(true)
@@ -225,7 +243,7 @@ function WL:ShowToolsPanel()
     toggleLabel:SetText("|cffe0c050Toggle Sources|r")
 
     yPos = yPos - 18
-    local sourceOrder = { "wowhead", "archon", "icyveins" }
+    local sourceOrder = { "wowhead", "archon", "icyveins", "murlok" }
     f.toggleChecks = {} -- store references for refresh
 
     for _, src in ipairs(sourceOrder) do
@@ -346,7 +364,7 @@ function WL:ShowToolsPanel()
     clearAllBtn:SetPoint("TOPLEFT", 16, yPos)
     clearAllBtn:SetText("|cffff4444Clear All Loadouts|r")
     clearAllBtn:SetScript("OnClick", function()
-        StaticPopup_Show("WEBLOADOUTS_CONFIRM_CLEAR_LOADOUTS")
+        WL:ShowConfirmClearLoadouts()
     end)
 
     ----------------------------------------------------------------
@@ -382,7 +400,7 @@ function WL:RefreshToolsPanel()
     -- Update source URLs with spec-specific guide URLs
     if toolsFrame.urlBoxes then
         local allBuilds = self:GetAllBuildsForCurrentSpec()
-        local sourceOrder = { "wowhead", "archon", "icyveins" }
+        local sourceOrder = { "wowhead", "archon", "icyveins", "murlok" }
 
         for _, src in ipairs(sourceOrder) do
             local urlBox = toolsFrame.urlBoxes[src]
@@ -424,7 +442,7 @@ function WL:ShowAddImportDialog()
         return
     end
 
-    local f = CreateFrame("Frame", "WebLoadoutsAddImport", UIParent, "BackdropTemplate")
+    local f = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
     f:SetSize(460, 360)
     f:SetPoint("CENTER")
     f:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -468,7 +486,7 @@ function WL:ShowAddImportDialog()
     sourceLabel:SetPoint("TOPLEFT", nameBox, "BOTTOMLEFT", -4, -12)
     sourceLabel:SetText("Source:")
 
-    local sources = { "wowhead", "icyveins", "archon", "manual" }
+    local sources = { "wowhead", "icyveins", "archon", "murlok", "manual" }
     local sourceButtons = {}
     local selectedSource = "manual"
 

@@ -25,6 +25,7 @@ local DB_DEFAULTS = {
             wowhead  = true,
             icyveins = true,
             archon   = true,
+            murlok   = true,
             manual   = true,
         },
     },
@@ -66,6 +67,9 @@ function WL:InitStorage()
         self:MigrateDB(self.db.version, DB_VERSION)
         self.db.version = DB_VERSION
     end
+
+    -- Ensure SourceInfo has all required entries (manual, etc.)
+    self:EnsureSourceInfo()
 end
 
 ----------------------------------------------------------------------
@@ -225,4 +229,80 @@ function WL:ClearAllIngameLoadouts()
     if skippedActive then
         WL:Print("|cffffffYour active loadout was preserved.|r")
     end
+end
+
+----------------------------------------------------------------------
+-- Ensure SourceInfo always has a "manual" entry
+-- (Data.lua is auto-synced and may not include it)
+----------------------------------------------------------------------
+
+function WL:EnsureSourceInfo()
+    if not self.SourceInfo then self.SourceInfo = {} end
+    if not self.SourceInfo["manual"] then
+        self.SourceInfo["manual"] = {
+            name  = "Manual",
+            color = "|cffcccccc",
+            icon  = "Interface\\Icons\\INV_Misc_Note_01",
+            url   = "",
+        }
+    end
+end
+
+----------------------------------------------------------------------
+-- Bundled + user build accessors
+-- (live here so Data.lua can be replaced without losing these)
+----------------------------------------------------------------------
+
+function WL:GetBundledBuilds(specID, source)
+    local builds = self.BundledBuilds and self.BundledBuilds[specID]
+    if not builds then return {} end
+    if not source then return builds end
+    local filtered = {}
+    for _, build in ipairs(builds) do
+        if build.source == source then
+            table.insert(filtered, build)
+        end
+    end
+    return filtered
+end
+
+function WL:GetAllBuildsForCurrentSpec()
+    local specID = self:GetPlayerSpecID()
+    local result = {}
+    if not specID then return result end
+
+    -- Bundled builds from Data.lua
+    local bundled = self.BundledBuilds and self.BundledBuilds[specID] or {}
+    for _, build in ipairs(bundled) do
+        local src = build.source or "manual"
+        if not result[src] then result[src] = {} end
+        table.insert(result[src], {
+            name          = build.name,
+            talentString  = build.talentString,
+            contentType   = build.contentType or "general",
+            heroSpec      = build.heroSpec or "",
+            sourceUrl     = build.sourceUrl or "",
+            notes         = build.notes or "",
+        })
+    end
+
+    -- User-saved builds from SavedVariables
+    if self.db and self.db.userBuilds then
+        for _, entry in pairs(self.db.userBuilds) do
+            if entry.specID == specID then
+                local src = entry.source or "manual"
+                if not result[src] then result[src] = {} end
+                table.insert(result[src], {
+                    name          = entry.name or "Unnamed",
+                    talentString  = entry.talentString,
+                    contentType   = entry.contentType or "general",
+                    heroSpec      = entry.heroSpec or "",
+                    sourceUrl     = entry.sourceUrl or "",
+                    notes         = entry.notes or "",
+                })
+            end
+        end
+    end
+
+    return result
 end

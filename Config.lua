@@ -51,7 +51,7 @@ SlashCmdList["WEBLOADOUTS"] = function(msg)
         WL:DeleteBuildByName(rest)
 
     elseif cmd == "clear" then
-        StaticPopup_Show("WEBLOADOUTS_CONFIRM_CLEAR")
+        WL:ShowConfirmClear()
 
     elseif cmd == "debug" then
         local current = WL:GetSetting("debug")
@@ -153,41 +153,59 @@ function WL:DeleteBuildByName(name)
 end
 
 ----------------------------------------------------------------------
--- Confirm clear dialog
+-- Lazy-registered StaticPopupDialogs
+-- IMPORTANT: Do NOT register these at file load time.
+-- Writing to StaticPopupDialogs from addon code taints the global
+-- table's iteration state, which propagates through Blizzard's
+-- internal UI systems and causes CastingBarFrame taint errors.
 ----------------------------------------------------------------------
 
-StaticPopupDialogs["WEBLOADOUTS_CONFIRM_CLEAR"] = {
-    text         = "Delete ALL saved WebLoadouts builds?\nThis cannot be undone.",
-    button1      = "Delete All",
-    button2      = "Cancel",
-    OnAccept     = function()
-        if WL.db then
-            wipe(WL.db.userBuilds)
-            WL:Print("All saved builds deleted.")
-        end
-    end,
-    timeout      = 0,
-    whileDead    = true,
-    hideOnEscape = true,
-    preferredIndex = 3,
-}
+local popupsRegistered = false
 
-----------------------------------------------------------------------
--- Confirm clear in-game loadouts dialog
-----------------------------------------------------------------------
+local function EnsurePopupsRegistered()
+    if popupsRegistered then return end
+    popupsRegistered = true
 
-StaticPopupDialogs["WEBLOADOUTS_CONFIRM_CLEAR_LOADOUTS"] = {
-    text         = "Delete ALL in-game talent loadouts for your current spec?\n\nYour active loadout will be preserved.\nWebLoadout builds and settings are not affected.\n\nThis cannot be undone.",
-    button1      = "Delete All",
-    button2      = "Cancel",
-    OnAccept     = function()
-        WL:ClearAllIngameLoadouts()
-    end,
-    timeout      = 0,
-    whileDead    = true,
-    hideOnEscape = true,
-    preferredIndex = 3,
-}
+    StaticPopupDialogs["WEBLOADOUTS_CONFIRM_CLEAR"] = {
+        text         = "Delete ALL saved WebLoadouts builds?\nThis cannot be undone.",
+        button1      = "Delete All",
+        button2      = "Cancel",
+        OnAccept     = function()
+            if WL.db then
+                wipe(WL.db.userBuilds)
+                WL:Print("All saved builds deleted.")
+            end
+        end,
+        timeout      = 0,
+        whileDead    = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+    }
+
+    StaticPopupDialogs["WEBLOADOUTS_CONFIRM_CLEAR_LOADOUTS"] = {
+        text         = "Delete ALL in-game talent loadouts for your current spec?\n\nYour active loadout will be preserved.\nWebLoadout builds and settings are not affected.\n\nThis cannot be undone.",
+        button1      = "Delete All",
+        button2      = "Cancel",
+        OnAccept     = function()
+            WL:ClearAllIngameLoadouts()
+        end,
+        timeout      = 0,
+        whileDead    = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+    }
+end
+
+-- Wrappers that ensure dialogs exist before showing them
+function WL:ShowConfirmClear()
+    EnsurePopupsRegistered()
+    StaticPopup_Show("WEBLOADOUTS_CONFIRM_CLEAR")
+end
+
+function WL:ShowConfirmClearLoadouts()
+    EnsurePopupsRegistered()
+    StaticPopup_Show("WEBLOADOUTS_CONFIRM_CLEAR_LOADOUTS")
+end
 
 ----------------------------------------------------------------------
 -- Settings (placeholder)

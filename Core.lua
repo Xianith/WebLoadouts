@@ -50,9 +50,10 @@ function WL:UpdatePlayerInfo()
 end
 
 function WL:GetPlayerSpecID()
-    if not self.playerSpec then
-        self:UpdatePlayerInfo()
-    end
+    -- NOTE: Do not call UpdatePlayerInfo() here as a fallback.
+    -- This function may be called from Menu.ModifyMenu callbacks,
+    -- and calling Blizzard APIs from that context taints secure UI state.
+    -- Player info is kept current via PLAYER_LOGIN and PLAYER_SPECIALIZATION_CHANGED.
     return self.playerSpec
 end
 
