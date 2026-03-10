@@ -1,4 +1,6 @@
 # WebLoadouts
+[
+Download on CurseForge](https://www.curseforge.com/wow/addons/webloadouts)
 
 A World of Warcraft addon that brings community talent builds from **Wowhead**, **Archon**, and **Icy Veins** directly into your talent loadout dropdown — no more alt-tabbing to copy and paste talent strings.
 
