@@ -2,7 +2,7 @@
 ## Title: |cff00ccffWeb|r|cffffffffLoadouts|r
 ## Notes: Import talent builds from Wowhead, Icy Veins, Archon and more - right from the talent screen.
 ## Author: Claude & Friends
-## Version: 0.1.0
+## Version: @project-version@
 ## SavedVariables: WebLoadoutsDB
 ## IconTexture: Interface\Icons\INV_Misc_Web_01
 ## X-Category: Talents
