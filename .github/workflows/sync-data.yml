@@ -17,14 +17,32 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Throttle — skip if synced within 12 hours
+        id: throttle
+        run: |
+          LAST_SYNC=$(git log -1 --format="%ct" -- Data.lua 2>/dev/null || echo 0)
+          NOW=$(date +%s)
+          DIFF=$(( NOW - LAST_SYNC ))
+          HOURS=$(( DIFF / 3600 ))
+          echo "Hours since last Data.lua commit: $HOURS"
+          if [ "$DIFF" -lt 43200 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Skipping — last sync was ${HOURS}h ago (< 12h)"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Download Data.lua
+        if: steps.throttle.outputs.skip != 'true'
         run: |
           curl -fSL "https://wow.xianith.com/webloadouts/data.lua" -o Data.lua.new
 
       - name: Validate download
+        if: steps.throttle.outputs.skip != 'true'
         run: |
-          # Ensure the file is non-empty and looks like valid Lua
           if [ ! -s Data.lua.new ]; then
             echo "Error: Downloaded file is empty"
             exit 1
@@ -36,6 +54,7 @@ jobs:
           echo "Validation passed"
 
       - name: Check for changes
+        if: steps.throttle.outputs.skip != 'true'
         id: diff
         run: |
           if cmp -s Data.lua Data.lua.new; then
@@ -46,19 +65,35 @@ jobs:
             echo "Changes detected"
           fi
 
-      - name: Update Data.lua
-        if: steps.diff.outputs.changed == 'true'
-        run: mv Data.lua.new Data.lua
+      - name: Update Data.lua and CHANGES.txt
+        if: steps.throttle.outputs.skip != 'true' && steps.diff.outputs.changed == 'true'
+        run: |
+          mv Data.lua.new Data.lua
+
+          # Read current version from CHANGES.txt (e.g. "v0.1.2")
+          VERSION=$(grep -oP '## v\K[0-9]+\.[0-9]+\.[0-9]+' CHANGES.txt | head -1)
+          SYNC_TIME=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          # Update line 2 of CHANGES.txt with last sync timestamp
+          # (replaces existing sync line or inserts one)
+          if head -2 CHANGES.txt | grep -q "## Last Sync"; then
+            sed -i "2s|.*|## Last Sync ${SYNC_TIME} from wow.xianith.com/webloadouts|" CHANGES.txt
+          else
+            sed -i "1a\\## Last Sync ${SYNC_TIME} from wow.xianith.com/webloadouts" CHANGES.txt
+          fi
+
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "SYNC_TIME=${SYNC_TIME}" >> "$GITHUB_ENV"
 
       - name: Commit and push
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.throttle.outputs.skip != 'true' && steps.diff.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Data.lua
-          git commit -m "Update Data.lua from wow.xianith.com/webloadouts"
+          git add Data.lua CHANGES.txt
+          git commit -m "v${VERSION} — sync Data.lua (${SYNC_TIME})"
           git push
 
       - name: Clean up
-        if: steps.diff.outputs.changed == 'false'
+        if: steps.throttle.outputs.skip != 'true' && steps.diff.outputs.changed == 'false'
         run: rm -f Data.lua.new
