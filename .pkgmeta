@@ -12,4 +12,4 @@ ignore:
 
 manual-changelog:
   filename: CHANGES.txt
-  markup-type: plain
+  markup-type: markdown

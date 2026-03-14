@@ -1,394 +1,55 @@
-commit f998a9463f24f98acc8d5e0fab8f004f80c7d306
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 10 12:12:07 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 93be39456b4159b3f1c3b86c8465acb64c10054f
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 10 09:12:15 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit d99c0abbf281ec268954855310a611c578eab375
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 10 06:11:42 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit ab01e408d72995763dad692cf3ec6023bbd957ec
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 10 03:12:06 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 228069f16ef0655927f6ebc93ff5cb2a3efee0f9
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 10 00:11:44 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 772fe3ecb7ad4b0b905204e803bf09bc66cc2372
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Mon Mar 9 21:11:56 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit d8cb3d34e287343467468f3f8ad7769c09ec5f6d
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Mon Mar 9 18:11:58 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 2701fd50bbe050bc2fb6e6e25082280a9830b5f1
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Mon Mar 9 15:12:34 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 148454ac15de1abbc88b7ea16eea6e534bd7a4b2
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Mon Mar 9 12:11:55 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 20f8a12af6d07151b4ed9af83242ce0241927e73
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Mon Mar 9 09:12:10 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit e0d1792341951a717770ebbcbcaa4ae0200264e9
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Mon Mar 9 06:11:37 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 8c91b0726825af5368bda201ca27ce25e8bbfebd
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Mon Mar 9 03:11:56 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit dd6074a5e0ba86f9e87cd53d984d05669c6be18b
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Mon Mar 9 00:11:52 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit c3448c2fcbe40fa83f3f3c26c3ddd1245ff84ba3
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sun Mar 8 21:12:40 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 9859598cbc04e3120701f9d11d637ce02db62915
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sun Mar 8 18:11:50 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 2e91e0b5a87ab2ad92583edb28bf66bf3a615725
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sun Mar 8 15:11:47 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 44945a35b7b53f958d2dfe58080fe4a378bd30ea
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sun Mar 8 12:11:51 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 88698e0ec708f94f6306167652f0b43c15cea460
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sun Mar 8 09:12:06 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 19478b662da2bf38c3d718b14e768063d93f05c4
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sun Mar 8 06:11:42 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit f9aa31509c683cf739bbae1acf950a716816f602
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sun Mar 8 03:11:58 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit ae3639a4911264fa3d86dd3c67b18465f8bc68e1
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sun Mar 8 00:11:50 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 0182f5749dd359685947f324cda7837e1a662e6f
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sat Mar 7 21:12:12 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 87bfcc93ec7e52e17dbc156fc2f3d74e966710ed
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sat Mar 7 18:11:42 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 1d10c7058120d4ae40d9a17383bdc165dc894b7a
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sat Mar 7 15:11:57 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit bcc819cd2fe1a21f5881c6298af2c94e76395003
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sat Mar 7 12:12:15 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit e837cc40d04262121d660d3e6daef9ba9961d76c
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sat Mar 7 09:12:05 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit d3302796fa8878128a8df3af7c2831ce01af092c
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sat Mar 7 06:11:52 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit aace3a308e1f62b571a1c11715c6d08d87067c57
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sat Mar 7 03:12:20 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 3caa2c4e16374b33dfa1ce3242f2ade25be9e89a
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Sat Mar 7 00:11:43 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 5e6969d7a09f6dbe67939b09abf979e2bd3054f6
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Fri Mar 6 21:12:11 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit ef8f839a998117c5998c27d35671c5fcc3163b9f
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Fri Mar 6 18:11:59 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 2dba35ecd7f78c54360299329b64ee5bf2f2b882
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Fri Mar 6 15:12:26 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit dbba193332959a8df42417c165b82f5118197396
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Fri Mar 6 12:11:59 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 6d013f1e23eb152c438d0fd968bd6d59b47b66e3
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Fri Mar 6 09:12:23 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 038a136544902d43245399508f3a3b9590e95e11
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Fri Mar 6 06:11:50 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit f5b471c4b251583c058672953c8e81cac63a86a4
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Fri Mar 6 03:11:35 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 597d4292592e009706a86e2028c88c4490fe6ed5
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Fri Mar 6 02:43:03 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 5136eb76f11fafe4c1b0b7c191c7897aa8d7027a
-Author: Xianith <xianith@gmail.com>
-Date:   Thu Mar 5 13:12:37 2026 -0500
-
-    Add .pkgmeta for CurseForge packaging
-    
-    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-
-commit 9726d61a389904b9770aa65e36739f34f5ef936f
-Author: Xianith <xianith@gmail.com>
-Date:   Thu Mar 5 13:07:06 2026 -0500
-
-    Intial CurseForge test.
-    
-    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-
-commit f7dcf96a1e9f6cddf2756600eefe09c07c72b14f
-Author: Ben <xianith@gmail.com>
-Date:   Thu Mar 5 12:54:12 2026 -0500
-
-    Update README.md
-
-commit 24178fb4b26f8ec7187ee93f761b5992efedfe02
-Author: Ben <xianith@gmail.com>
-Date:   Thu Mar 5 12:48:50 2026 -0500
-
-    Update README.md
-    
-    Testing commit to CurseForge
-
-commit 5fa3fb89b997ac307d6fe9952c8a15f10ec119fa
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 18:20:15 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 78eb7a8596e2a9f55c7908773bcd0415c0000b87
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 16:30:11 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 3b6747e36da48897cbc061a0b426b5cfdb371d53
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 16:17:01 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 8630b64a8f882717be179b9d826504bd45568a11
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 16:02:21 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit aac310101f53f9095b2ab1132554f0206fb5b8e5
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 15:11:40 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit ff81d92c05e16227206cf644b22c3d376b5c12e2
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 12:11:17 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit b8e9531c436c229a156ff453ae2e1ac48297048c
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 09:11:46 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit a075f44354f570241d1a1aadb93cfd32cd4caffa
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 06:11:07 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit affd9d5195cd6a67f2777d094de4d5479a2f8b2c
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 03:11:35 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 12375453bbac0df452e446fa6bce9a5e9efe447f
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Wed Mar 4 00:11:10 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit de3c11a358f504d6fed668423a9ed1901063f1d1
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 3 21:35:52 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit b4db69b231d4ccfb55f4ef3f7d98c608446298e4
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 3 18:34:40 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 9627e13ea1328b544ca46377c15ce5c1d9bf60b5
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 3 18:01:30 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 82163999db1c37560feec6114e07fdf2d67449d1
-Author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-Date:   Tue Mar 3 17:53:25 2026 +0000
-
-    Update Data.lua from wow.xianith.com/webloadouts
-
-commit 6fae4dc436ec654b8b21f1cff4c5c0511b743650
-Author: Xianith <xianith@gmail.com>
-Date:   Tue Mar 3 11:18:18 2026 -0500
-
-    Remove CLAUDE.md from repo and add to .gitignore
-    
-    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-
-commit 6fa8491952a18786ad25a8331f5f67e76bfb50de
-Author: Xianith <xianith@gmail.com>
-Date:   Tue Mar 3 11:15:56 2026 -0500
-
-    Remove scraper, add GitHub Action to sync Data.lua
-    
-    - Remove scrape_builds.py (data now hosted at wow.xianith.com/webloadouts)
-    - Clean up .gitignore (remove Python/Playwright entries)
-    - Add sync-data workflow triggered via repository_dispatch or manual dispatch
-      Downloads Data.lua from wow.xianith.com, validates, and commits if changed
-    
-    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-
-commit ff14c4e824a460c2ea2ea0145bf5f29ef9764133
-Author: Xianith <xianith@gmail.com>
-Date:   Tue Mar 3 10:53:37 2026 -0500
-
-    Add logo and update addon icon to INV_Misc_Web_01
-    
-    - Add 400x400 logo.jpg for the project
-    - Change in-game addon icon from INV_Scroll_11 to INV_Misc_Web_01
-    
-    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-
-commit 08cf98a9ca203f180868768d7a7420c4889d3dae
-Author: Xianith <xianith@gmail.com>
-Date:   Tue Mar 3 10:44:46 2026 -0500
-
-    Add README with addon description and usage guide
-    
-    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-
-commit b533aa87774d7b21905249e279cb0287d96d816a
-Author: Xianith <xianith@gmail.com>
-Date:   Tue Mar 3 10:43:29 2026 -0500
-
-    Initial commit: WebLoadouts WoW addon
-    
-    WoW addon that adds community talent builds (Wowhead, Archon, Icy Veins)
-    directly into the native talent loadout dropdown. Features:
-    
-    - Hooks into MENU_CLASS_TALENT_PROFILE via Menu.ModifyMenu
-    - Builds organized by source > hero spec > build name
-    - Pre-bundled builds across all 39 specs
-    - WebLoadout Tools panel (source toggles, URLs, clear loadouts)
-    - Python scraper for fetching latest builds from community sites
-    - Imports via Blizzard's native dialog to avoid taint
-    
-    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-
+# WebLoadouts Changelog
+
+## v0.1.2 (2026-03-14)
+
+### Import & Loadout Management
+- All WebLoadouts imports are now prefixed with "WL - " so they're easily identifiable in your talent loadout list
+- "Clear WL Loadouts" now only deletes loadouts starting with "WL - " — your manually created loadouts are never touched
+- Confirmation dialog shows your character name and updated wording
+
+### Dropdown Menu
+- Source favicon icons (Wowhead, Archon, Icy Veins, Raider.io, Murlok.io) display next to each source name
+- "WebLoadouts" labeled section header with separators above and below
+- Click the header to open WebLoadouts Options
+
+### Options Panel
+- Renamed to "WebLoadouts Options"
+- Merged Toggle Sources & Build Sources into a single row per source (checkbox + name + copyable URL)
+- Close button moved inline next to Clear WL Loadouts
+- Last Synced shows timestamp + click-to-copy wow.xianith.com/webloadouts URL
+- Sources with no builds for your current spec are automatically disabled and dimmed
+- Panel sized to fit all 5 sources (Wowhead, Archon, Icy Veins, Raider.io, Murlok.io)
+- Tooltip on each checkbox explains what it toggles
+
+### Technical
+- Staggered one-per-frame deletion for reliable loadout clearing
+- Custom favicon PNGs shipped in Media/ folder
+- AttachTexture nil-guarded against secure menu context errors
+- Added StageImport fallback path in ImportExport.lua
+- Added Raider.io as a new build source
+
+## v0.1.1 (2026-03-05)
+
+### CurseForge Packaging
+- Added .pkgmeta for CurseForge packaging support
+- TOC version now uses @project-version@ tag substitution
+- Added manual changelog (CHANGES.txt)
+
+### Data Pipeline
+- Removed bundled Python scraper
+- Build data now auto-synced from wow.xianith.com/webloadouts via GitHub Actions
+- Data.lua updated every 3 hours automatically
+
+## v0.1.0 (2026-03-03)
+
+### Initial Release
+- Hooks into the native talent loadout dropdown via Menu.ModifyMenu
+- Builds organized by source > hero spec > content type
+- Pre-bundled talent builds for all 39 specs from Wowhead, Archon, Icy Veins, and Murlok.io
+- WebLoadout Tools panel with source toggles, guide URLs, and clear loadouts
+- Imports via Blizzard's native import dialog to avoid taint
+- SavedVariables for user-saved custom builds
+- Slash commands: /wl help, /wl add, /wl list, /wl export, /wl delete
+- Add Import dialog with source, content type, and talent string input
+- Tooltip previews on hover showing build details
+- Spec-aware filtering — only shows builds for your current spec
