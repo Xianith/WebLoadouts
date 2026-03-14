@@ -11,11 +11,11 @@ WL.DataLastSynced = "2026-03-14 12:20"
 
 -- Source display info
 WL.SourceInfo = {
-    wowhead  = { name = "Wowhead",    color = "|cffff8040", icon = "Interface\\Icons\\INV_Misc_Book_09",          url = "wowhead.com" },
-    icyveins = { name = "Icy Veins",  color = "|cff42a5f5", icon = "Interface\\Icons\\Spell_Frost_FrostBolt02", url = "icy-veins.com" },
-    archon   = { name = "Archon",     color = "|cff66bb6a", icon = "Interface\\Icons\\Achievement_Arena_5v5_4", url = "archon.gg" },
-    raiderio = { name = "Raider.io",  color = "|cffe6783e", icon = "Interface\\Icons\\INV_Misc_Map_01",         url = "raider.io" },
-    murlok   = { name = "Murlok.io",  color = "|cffab47bc", icon = "Interface\\Icons\\INV_Misc_Fish_07",        url = "murlok.io" },
+    wowhead  = { name = "Wowhead",    color = "|cffff8040", icon = "Interface\\AddOns\\WebLoadouts\\Media\\wowhead",  url = "wowhead.com" },
+    icyveins = { name = "Icy Veins",  color = "|cff42a5f5", icon = "Interface\\AddOns\\WebLoadouts\\Media\\icyveins", url = "icy-veins.com" },
+    archon   = { name = "Archon",     color = "|cff66bb6a", icon = "Interface\\AddOns\\WebLoadouts\\Media\\archon",   url = "archon.gg" },
+    raiderio = { name = "Raider.io",  color = "|cffe6783e", icon = "Interface\\AddOns\\WebLoadouts\\Media\\raiderio", url = "raider.io" },
+    murlok   = { name = "Murlok.io",  color = "|cffab47bc", icon = "Interface\\AddOns\\WebLoadouts\\Media\\murlok",   url = "murlok.io" },
 }
 
 -- Content type display info

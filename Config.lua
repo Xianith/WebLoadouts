@@ -183,8 +183,8 @@ local function EnsurePopupsRegistered()
     }
 
     StaticPopupDialogs["WEBLOADOUTS_CONFIRM_CLEAR_LOADOUTS"] = {
-        text         = "Delete ALL in-game talent loadouts for your current spec?\n\nYour active loadout will be preserved.\nWebLoadout builds and settings are not affected.\n\nThis cannot be undone.",
-        button1      = "Delete All",
+        text         = "Delete all |cff00ccffWL -|r prefixed talent loadouts for |cff00ccff%s|r's current spec?\n\nOnly loadouts imported through WebLoadouts will be removed.\nYour other loadouts and active loadout are preserved.\n\nThis cannot be undone.",
+        button1      = "Delete WL Loadouts",
         button2      = "Cancel",
         OnAccept     = function()
             WL:ClearAllIngameLoadouts()
@@ -204,7 +204,8 @@ end
 
 function WL:ShowConfirmClearLoadouts()
     EnsurePopupsRegistered()
-    StaticPopup_Show("WEBLOADOUTS_CONFIRM_CLEAR_LOADOUTS")
+    local charName = UnitName("player") or "your character"
+    StaticPopup_Show("WEBLOADOUTS_CONFIRM_CLEAR_LOADOUTS", charName)
 end
 
 ----------------------------------------------------------------------

@@ -195,40 +195,49 @@ function WL:ClearAllIngameLoadouts()
         return
     end
 
-    -- Get all config IDs for this spec
-    local configIDs = C_ClassTalents.GetConfigIDsBySpecID(specID)
-    if not configIDs or #configIDs == 0 then
-        WL:Print("No loadouts found to delete.")
-        return
-    end
-
     local activeConfigID = C_ClassTalents.GetActiveConfigID()
     local deleted = 0
-    local skippedActive = false
+    local skipped = 0
 
-    for _, configID in ipairs(configIDs) do
-        if configID == activeConfigID then
-            -- Cannot delete the currently active loadout
-            skippedActive = true
-        else
-            local ok, err = pcall(C_ClassTalents.DeleteConfig, configID)
-            if ok then
-                deleted = deleted + 1
+    -- Only delete loadouts whose name starts with "WL - " (WebLoadouts imports).
+    -- Delete one config per frame to let the game process each deletion.
+    -- Re-fetch the config list each iteration to avoid stale references.
+    local function DeleteNext()
+        local configIDs = C_ClassTalents.GetConfigIDsBySpecID(specID)
+        if not configIDs then return end
+
+        for _, configID in ipairs(configIDs) do
+            if configID == activeConfigID then
+                -- Never delete the active loadout
+                skipped = skipped + 1
             else
-                WL:Debug("Failed to delete config " .. configID .. ": " .. tostring(err))
+                -- Check if the loadout name starts with "WL - "
+                local configInfo = C_Traits.GetConfigInfo(configID)
+                local configName = configInfo and configInfo.name or ""
+                if configName:sub(1, 5) == "WL - " then
+                    local ok, err = pcall(C_ClassTalents.DeleteConfig, configID)
+                    if ok then
+                        deleted = deleted + 1
+                        C_Timer.After(0, DeleteNext)
+                        return
+                    else
+                        WL:Debug("Failed to delete config " .. configID .. ": " .. tostring(err))
+                    end
+                else
+                    skipped = skipped + 1
+                end
             end
+        end
+
+        -- No more deletable WL configs — report results
+        if deleted > 0 then
+            WL:Print("Deleted " .. deleted .. " WL loadout(s).")
+        else
+            WL:Print("No WL loadouts found to delete.")
         end
     end
 
-    if deleted > 0 then
-        WL:Print("Deleted " .. deleted .. " loadout(s).")
-    else
-        WL:Print("No loadouts were deleted.")
-    end
-
-    if skippedActive then
-        WL:Print("|cffffffYour active loadout was preserved.|r")
-    end
+    DeleteNext()
 end
 
 ----------------------------------------------------------------------

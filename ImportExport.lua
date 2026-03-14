@@ -87,7 +87,9 @@ function WL:ImportViaBuildDialog(talentString, buildName)
     end
 
     if nameBox and buildName then
-        nameBox:SetText(buildName)
+        -- Prefix with "WL - " so we can identify WebLoadout imports later
+        local prefixedName = "WL - " .. buildName
+        nameBox:SetText(prefixedName)
     end
 
     WL:Debug("Import dialog opened with pre-filled string")
@@ -95,29 +97,82 @@ function WL:ImportViaBuildDialog(talentString, buildName)
 end
 
 ----------------------------------------------------------------------
--- Direct staging (stages in tree, user clicks Apply Changes)
+-- Direct staging — stages the build in the talent tree without the
+-- import dialog.  The user sees the changes and clicks Apply Changes.
+-- Falls back to the Blizzard dialog if staging fails.
 ----------------------------------------------------------------------
 
 function WL:StageBuild(talentString)
     if InCombatLockdown() then return false end
 
+    -- Try multiple known talent frame references
     local talentsTab = (PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame)
-                    or (ClassTalentFrame and ClassTalentFrame.TalentsTab)
-    if not talentsTab then return false end
+                    or (ClassTalentFrame and (ClassTalentFrame.TalentsTab or ClassTalentFrame.TalentsFrame))
+    if not talentsTab then
+        WL:Debug("StageBuild: no talent frame found")
+        return false
+    end
 
+    -- Try ImportLoadout (stages the build in the tree, user clicks Apply)
     if talentsTab.ImportLoadout then
-        local success = pcall(function()
+        local success, err = pcall(function()
             talentsTab:ImportLoadout(talentString)
         end)
         if success then
             WL:Debug("Build staged successfully via ImportLoadout")
             return true
         else
-            WL:Debug("ImportLoadout failed, falling back to dialog")
+            WL:Debug("ImportLoadout error: " .. tostring(err))
         end
+    else
+        WL:Debug("StageBuild: ImportLoadout not found on talent frame")
     end
 
     return false
+end
+
+----------------------------------------------------------------------
+-- StageImport — one-click import from the dropdown menu.
+-- Tries direct staging first, falls back to the Blizzard import dialog.
+----------------------------------------------------------------------
+
+function WL:StageImport(talentString, buildName, source)
+    if not talentString or talentString == "" then
+        WL:Print("No talent string to import.")
+        return false
+    end
+
+    if InCombatLockdown() then
+        WL:Print("Cannot import while in combat.")
+        return false
+    end
+
+    -- Force-load the talent UI if it hasn't been loaded yet
+    if not PlayerSpellsFrame then
+        pcall(UIParentLoadAddOn, "Blizzard_PlayerSpells")
+    end
+
+    -- Try direct staging first (the talent frame should already be open
+    -- since the user clicked the dropdown from within it)
+    local staged = self:StageBuild(talentString)
+    if staged then
+        local srcInfo = source and WL.SourceInfo[source]
+        local srcLabel = srcInfo and (" (" .. srcInfo.name .. ")") or ""
+        WL:Print("Staged: " .. (buildName or "WebBuild") .. srcLabel .. " — click |cff00ff00Apply Changes|r")
+        return true
+    end
+
+    -- Fallback: open the Blizzard import dialog with pre-filled data
+    WL:Debug("StageImport: staging failed, falling back to Blizzard dialog")
+    local success = self:ImportViaBuildDialog(talentString, buildName)
+    if success then
+        local srcInfo = source and WL.SourceInfo[source]
+        local srcLabel = srcInfo and (" (" .. srcInfo.name .. ")") or ""
+        WL:Print("Importing: " .. (buildName or "WebBuild") .. srcLabel)
+    else
+        WL:Print("|cffff4444Import failed.|r Try opening talents (N) first, then use the dropdown.")
+    end
+    return success
 end
 
 ----------------------------------------------------------------------

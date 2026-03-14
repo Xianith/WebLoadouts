@@ -70,10 +70,33 @@ function WL:OnLoadoutDropdownOpen(rootDescription)
     -- and will taint Blizzard UI state (e.g. CastingBarFrame barType).
     -- Player info is already cached via PLAYER_LOGIN / PLAYER_SPECIALIZATION_CHANGED.
     local allBuilds = self:GetAllBuildsForCurrentSpec()
-    local sourceOrder = { "wowhead", "archon", "icyveins", "murlok" }
+    local sourceOrder = { "wowhead", "archon", "icyveins", "raiderio", "murlok" }
 
-    -- Separator before web builds section
+    -- WebLoadouts section header — click opens Options
     rootDescription:CreateDivider()
+    local header = rootDescription:CreateButton("|cff00ccffWebLoadouts|r", function()
+        C_Timer.After(0, function() WL:ShowToolsPanel() end)
+        return MenuResponse and MenuResponse.CloseAll or nil
+    end)
+    header:SetTooltip(function(tooltip, desc)
+        GameTooltip_SetTitle(tooltip, "WebLoadouts")
+        GameTooltip_AddNormalLine(tooltip, "Click to open WebLoadouts Options")
+    end)
+    rootDescription:CreateDivider()
+
+    -- Helper: attach a source icon to a menu button
+    local function AttachSourceIcon(element, iconPath)
+        if iconPath then
+            element:AddInitializer(function(button, description, menu)
+                local tex = button:AttachTexture()
+                if tex then
+                    tex:SetSize(16, 16)
+                    tex:SetPoint("LEFT")
+                    tex:SetTexture(iconPath)
+                end
+            end)
+        end
+    end
 
     -- Add builds grouped by source, then by hero spec
     for _, source in ipairs(sourceOrder) do
@@ -82,6 +105,7 @@ function WL:OnLoadoutDropdownOpen(rootDescription)
             if builds and #builds > 0 then
                 local srcInfo = WL.SourceInfo[source]
                 local srcName = srcInfo and (srcInfo.color .. srcInfo.name .. "|r") or source
+                local srcIcon = srcInfo and srcInfo.icon
 
                 -- Group builds by heroSpec
                 local heroGroups = {}   -- heroSpec -> list of builds
@@ -101,9 +125,10 @@ function WL:OnLoadoutDropdownOpen(rootDescription)
                     end
                 end
 
-                -- Create the source submenu
+                -- Create the source submenu (with icon)
                 local submenu = rootDescription:CreateButton(srcName)
                 submenu:SetSelectionIgnored()
+                AttachSourceIcon(submenu, srcIcon)
 
                 -- Add hero spec sub-submenus
                 for _, hero in ipairs(heroOrder) do
@@ -139,13 +164,6 @@ function WL:OnLoadoutDropdownOpen(rootDescription)
         end
     end
 
-    -- WebLoadout Tools button at the bottom — opens standalone panel
-    rootDescription:CreateDivider()
-    local toolsBtn = rootDescription:CreateButton("|cff00ccffWebLoadout Tools|r", function()
-        C_Timer.After(0, function() WL:ShowToolsPanel() end)
-        return MenuResponse and MenuResponse.CloseAll or nil
-    end)
-    toolsBtn:SetSelectionIgnored()
 end
 
 ----------------------------------------------------------------------
@@ -172,7 +190,7 @@ function WL:ImportBuild(build, source)
         return
     end
 
-    -- Always use the Blizzard import dialog — reliable and avoids taint
+    -- Open Blizzard's import dialog pre-filled with the build
     local success = self:ImportViaBuildDialog(talentString, buildName)
     if success then
         local srcInfo = source and WL.SourceInfo[source]
@@ -182,7 +200,7 @@ function WL:ImportBuild(build, source)
 end
 
 ----------------------------------------------------------------------
--- Tools Panel
+-- Tools Panel (Options)
 ----------------------------------------------------------------------
 
 local toolsFrame
@@ -196,7 +214,7 @@ function WL:ShowToolsPanel()
     end
 
     local f = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
-    f:SetSize(420, 440)
+    f:SetSize(460, 400)
     f:SetPoint("CENTER")
     f:SetFrameStrata("FULLSCREEN_DIALOG")
     f:SetMovable(true)
@@ -217,7 +235,7 @@ function WL:ShowToolsPanel()
     -- Title
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -12)
-    title:SetText("|cff00ccffWebLoadout Tools|r")
+    title:SetText("|cff00ccffWebLoadouts Options|r")
 
     -- Close button
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
@@ -236,27 +254,34 @@ function WL:ShowToolsPanel()
     local yPos = -40 -- track vertical cursor
 
     ----------------------------------------------------------------
-    -- Section 1: Source Toggles
+    -- Section 1: Build Sources (toggle + URL combined)
     ----------------------------------------------------------------
-    local toggleLabel = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    toggleLabel:SetPoint("TOPLEFT", 16, yPos)
-    toggleLabel:SetText("|cffe0c050Toggle Sources|r")
+    local sourcesLabel = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    sourcesLabel:SetPoint("TOPLEFT", 16, yPos)
+    sourcesLabel:SetText("|cffe0c050Build Sources|r")
 
-    yPos = yPos - 18
-    local sourceOrder = { "wowhead", "archon", "icyveins", "murlok" }
+    yPos = yPos - 20
+    local sourceOrder = { "wowhead", "archon", "icyveins", "raiderio", "murlok" }
     f.toggleChecks = {} -- store references for refresh
+    f.urlBoxes = {}     -- store references for refresh
 
     for _, src in ipairs(sourceOrder) do
         local srcInfo = WL.SourceInfo[src]
         if srcInfo then
+            -- Checkbox (toggle source in dropdown)
             local row = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate")
             row:SetPoint("TOPLEFT", 20, yPos)
             row:SetSize(26, 26)
             row:SetChecked(WL:IsSourceEnabled(src))
 
-            local label = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-            label:SetPoint("LEFT", row, "RIGHT", 4, 0)
-            label:SetText(srcInfo.color .. srcInfo.name .. "|r")
+            -- Tooltip on the checkbox
+            row:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText("Toggle " .. srcInfo.name)
+                GameTooltip:AddLine("Show or hide " .. srcInfo.name .. " builds\nin the talent loadout dropdown.", 1, 1, 1, true)
+                GameTooltip:Show()
+            end)
+            row:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
             row:SetScript("OnClick", function(self)
                 local checked = self:GetChecked()
@@ -267,77 +292,66 @@ function WL:ShowToolsPanel()
                 WL:Print(srcInfo.name .. " builds " .. state)
             end)
 
-            f.toggleChecks[src] = row
-            yPos = yPos - 28
-        end
-    end
-
-    local div1 = CreateDivider(f, toggleLabel, yPos - (-40) - 14)
-    -- anchor divider relative to toggleLabel
-    div1:ClearAllPoints()
-    div1:SetPoint("TOPLEFT", f, "TOPLEFT", 16, yPos - 4)
-    div1:SetPoint("RIGHT", f, "RIGHT", -16, 0)
-    yPos = yPos - 12
-
-    ----------------------------------------------------------------
-    -- Section 2: Build Sources (URLs)
-    ----------------------------------------------------------------
-    local srcLabel = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    srcLabel:SetPoint("TOPLEFT", 16, yPos)
-    srcLabel:SetText("|cffe0c050Build Sources|r")
-
-    yPos = yPos - 18
-    f.urlBoxes = {} -- store references for refresh
-
-    for _, src in ipairs(sourceOrder) do
-        local srcInfo = WL.SourceInfo[src]
-        if srcInfo then
             -- Source name label
-            local nameLabel = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            nameLabel:SetPoint("TOPLEFT", 20, yPos)
-            nameLabel:SetText(srcInfo.color .. srcInfo.name .. "|r")
+            local label = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            label:SetPoint("LEFT", row, "RIGHT", 2, 0)
+            label:SetText(srcInfo.color .. srcInfo.name .. "|r")
+            label:SetWidth(65)
+            label:SetJustifyH("LEFT")
 
             -- Copyable URL EditBox
             local urlBox = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
-            urlBox:SetSize(280, 18)
-            urlBox:SetPoint("LEFT", nameLabel, "RIGHT", 8, 0)
+            urlBox:SetSize(300, 18)
+            urlBox:SetPoint("LEFT", label, "RIGHT", 6, 0)
             urlBox:SetFontObject("GameFontHighlightSmall")
             urlBox:SetAutoFocus(false)
             urlBox:SetMaxLetters(200)
 
-            -- Default to generic domain URL
             local displayUrl = srcInfo.url or ""
             urlBox:SetText(displayUrl)
-
-            -- Select-all on focus so user can copy
             urlBox:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
             urlBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-            -- Prevent editing — re-set the text on any change
             urlBox:SetScript("OnTextChanged", function(self, userInput)
                 if userInput then self:SetText(self.displayUrl or "") end
             end)
             urlBox.displayUrl = displayUrl
 
+            f.toggleChecks[src] = row
             f.urlBoxes[src] = urlBox
-            yPos = yPos - 24
+            yPos = yPos - 28
         end
     end
 
-    local div2 = f:CreateTexture(nil, "ARTWORK")
-    div2:SetHeight(1)
-    div2:SetPoint("TOPLEFT", f, "TOPLEFT", 16, yPos - 4)
-    div2:SetPoint("RIGHT", f, "RIGHT", -16, 0)
-    div2:SetColorTexture(0.4, 0.4, 0.4, 0.6)
+    local div1 = f:CreateTexture(nil, "ARTWORK")
+    div1:SetHeight(1)
+    div1:SetPoint("TOPLEFT", f, "TOPLEFT", 16, yPos - 4)
+    div1:SetPoint("RIGHT", f, "RIGHT", -16, 0)
+    div1:SetColorTexture(0.4, 0.4, 0.4, 0.6)
     yPos = yPos - 12
 
     ----------------------------------------------------------------
-    -- Section 3: Last Synced
+    -- Section 3: Last Synced + source URL
     ----------------------------------------------------------------
+    local syncTime = WL.DataLastSynced or "Never"
     local syncLabel = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     syncLabel:SetPoint("TOPLEFT", 16, yPos)
-    local syncTime = WL.DataLastSynced or "Never"
-    syncLabel:SetText("|cff888888Last Synced:  |r" .. syncTime)
+    syncLabel:SetText("|cff888888Last Synced:  |r" .. syncTime .. "  |cff888888from|r")
     f.syncLabel = syncLabel
+
+    -- Copyable URL next to the sync label
+    local syncUrl = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
+    syncUrl:SetSize(200, 18)
+    syncUrl:SetPoint("LEFT", syncLabel, "RIGHT", 6, 0)
+    syncUrl:SetFontObject("GameFontHighlightSmall")
+    syncUrl:SetAutoFocus(false)
+    syncUrl:SetMaxLetters(200)
+    syncUrl:SetText("wow.xianith.com/webloadouts")
+    syncUrl:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+    syncUrl:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+    syncUrl:SetScript("OnTextChanged", function(self, userInput)
+        if userInput then self:SetText("wow.xianith.com/webloadouts") end
+    end)
+    f.syncUrl = syncUrl
 
     yPos = yPos - 20
 
@@ -349,30 +363,28 @@ function WL:ShowToolsPanel()
     yPos = yPos - 12
 
     ----------------------------------------------------------------
-    -- Section 4: Clear All Loadouts
+    -- Section 4: Clear WL Loadouts + Close button
     ----------------------------------------------------------------
     local clearDesc = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     clearDesc:SetPoint("TOPLEFT", 16, yPos)
     clearDesc:SetWidth(380)
     clearDesc:SetJustifyH("LEFT")
-    clearDesc:SetText("|cffaaaaaaDeletes all in-game talent loadouts for your current spec. " ..
-        "Your active loadout will be preserved. WebLoadout builds are NOT affected.|r")
+    clearDesc:SetText("|cffaaaaaaDeletes all \"WL - \" prefixed talent loadouts for your current spec. " ..
+        "Your other loadouts and active loadout are preserved.|r")
     yPos = yPos - 36
 
     local clearAllBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     clearAllBtn:SetSize(180, 28)
     clearAllBtn:SetPoint("TOPLEFT", 16, yPos)
-    clearAllBtn:SetText("|cffff4444Clear All Loadouts|r")
+    clearAllBtn:SetText("|cffff4444Clear WL Loadouts|r")
     clearAllBtn:SetScript("OnClick", function()
         WL:ShowConfirmClearLoadouts()
     end)
 
-    ----------------------------------------------------------------
-    -- Close button at bottom-right
-    ----------------------------------------------------------------
+    -- Close button — right of the Clear button on the same row
     local doneBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    doneBtn:SetSize(80, 26)
-    doneBtn:SetPoint("BOTTOMRIGHT", -16, 12)
+    doneBtn:SetSize(80, 28)
+    doneBtn:SetPoint("LEFT", clearAllBtn, "RIGHT", 8, 0)
     doneBtn:SetText("Close")
     doneBtn:SetScript("OnClick", function() f:Hide() end)
 
@@ -390,23 +402,31 @@ end
 function WL:RefreshToolsPanel()
     if not toolsFrame then return end
 
-    -- Update toggle checkboxes
+    local allBuilds = self:GetAllBuildsForCurrentSpec()
+    local sourceOrder = { "wowhead", "archon", "icyveins", "raiderio", "murlok" }
+
+    -- Update toggle checkboxes — auto-disable sources with no builds
     if toolsFrame.toggleChecks then
-        for src, check in pairs(toolsFrame.toggleChecks) do
-            check:SetChecked(WL:IsSourceEnabled(src))
+        for _, src in ipairs(sourceOrder) do
+            local check = toolsFrame.toggleChecks[src]
+            if check then
+                local builds = allBuilds[src]
+                local hasBuilds = builds and #builds > 0
+                check:SetChecked(WL:IsSourceEnabled(src))
+                check:SetEnabled(hasBuilds)
+                check:SetAlpha(hasBuilds and 1.0 or 0.4)
+            end
         end
     end
 
     -- Update source URLs with spec-specific guide URLs
     if toolsFrame.urlBoxes then
-        local allBuilds = self:GetAllBuildsForCurrentSpec()
-        local sourceOrder = { "wowhead", "archon", "icyveins", "murlok" }
-
         for _, src in ipairs(sourceOrder) do
             local urlBox = toolsFrame.urlBoxes[src]
             if urlBox then
                 local srcInfo = WL.SourceInfo[src]
                 local builds = allBuilds[src]
+                local hasBuilds = builds and #builds > 0
                 local bestUrl = (srcInfo and srcInfo.url) or ""
 
                 -- Pick the first unique sourceUrl from builds for this source
@@ -421,6 +441,7 @@ function WL:RefreshToolsPanel()
 
                 urlBox.displayUrl = bestUrl
                 urlBox:SetText(bestUrl)
+                urlBox:SetAlpha(hasBuilds and 1.0 or 0.4)
             end
         end
     end
@@ -428,7 +449,7 @@ function WL:RefreshToolsPanel()
     -- Update last synced
     if toolsFrame.syncLabel then
         local syncTime = WL.DataLastSynced or "Never"
-        toolsFrame.syncLabel:SetText("|cff888888Last Synced:  |r" .. syncTime)
+        toolsFrame.syncLabel:SetText("|cff888888Last Synced:  |r" .. syncTime .. "  |cff888888from|r")
     end
 end
 
