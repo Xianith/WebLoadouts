@@ -254,7 +254,7 @@ function WL:ShowToolsPanel()
     local yPos = -40 -- track vertical cursor
 
     ----------------------------------------------------------------
-    -- Section 1: Build Sources (toggle + URL combined)
+    -- Section 1: Build Sources (toggle + status + URL combined)
     ----------------------------------------------------------------
     local sourcesLabel = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     sourcesLabel:SetPoint("TOPLEFT", 16, yPos)
@@ -264,10 +264,34 @@ function WL:ShowToolsPanel()
     local sourceOrder = { "wowhead", "archon", "icyveins", "raiderio", "murlok" }
     f.toggleChecks = {} -- store references for refresh
     f.urlBoxes = {}     -- store references for refresh
+    f.statusFrames = {} -- store status indicator frames (M/P)
 
     for _, src in ipairs(sourceOrder) do
         local srcInfo = WL.SourceInfo[src]
         if srcInfo then
+            -- Status indicator frame (M = missing, P = partial) — left of checkbox
+            local statusFrame = CreateFrame("Frame", nil, f)
+            statusFrame:SetSize(14, 14)
+            statusFrame:SetPoint("TOPLEFT", 6, yPos - 6)
+
+            local statusText = statusFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            statusText:SetPoint("CENTER")
+            statusText:SetText("")
+            statusFrame.text = statusText
+
+            statusFrame:SetScript("OnEnter", function(self)
+                if self.tooltipTitle then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.tooltipTitle, 1, 1, 1)
+                    if self.tooltipBody then
+                        GameTooltip:AddLine(self.tooltipBody, nil, nil, nil, true)
+                    end
+                    GameTooltip:Show()
+                end
+            end)
+            statusFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+            f.statusFrames[src] = statusFrame
+
             -- Checkbox (toggle source in dropdown)
             local row = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate")
             row:SetPoint("TOPLEFT", 20, yPos)
@@ -330,7 +354,7 @@ function WL:ShowToolsPanel()
     yPos = yPos - 12
 
     ----------------------------------------------------------------
-    -- Section 3: Last Synced + source URL
+    -- Section 2: Last Synced + source URL
     ----------------------------------------------------------------
     local syncTime = WL.DataLastSynced or "Never"
     local syncLabel = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -355,19 +379,19 @@ function WL:ShowToolsPanel()
 
     yPos = yPos - 20
 
-    local div3 = f:CreateTexture(nil, "ARTWORK")
-    div3:SetHeight(1)
-    div3:SetPoint("TOPLEFT", f, "TOPLEFT", 16, yPos - 4)
-    div3:SetPoint("RIGHT", f, "RIGHT", -16, 0)
-    div3:SetColorTexture(0.4, 0.4, 0.4, 0.6)
+    local div2 = f:CreateTexture(nil, "ARTWORK")
+    div2:SetHeight(1)
+    div2:SetPoint("TOPLEFT", f, "TOPLEFT", 16, yPos - 4)
+    div2:SetPoint("RIGHT", f, "RIGHT", -16, 0)
+    div2:SetColorTexture(0.4, 0.4, 0.4, 0.6)
     yPos = yPos - 12
 
     ----------------------------------------------------------------
-    -- Section 4: Clear WL Loadouts + Close button
+    -- Section 3: Clear WL Loadouts + Close button (float right)
     ----------------------------------------------------------------
     local clearDesc = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     clearDesc:SetPoint("TOPLEFT", 16, yPos)
-    clearDesc:SetWidth(380)
+    clearDesc:SetWidth(420)
     clearDesc:SetJustifyH("LEFT")
     clearDesc:SetText("|cffaaaaaaDeletes all \"WL - \" prefixed talent loadouts for your current spec. " ..
         "Your other loadouts and active loadout are preserved.|r")
@@ -381,12 +405,15 @@ function WL:ShowToolsPanel()
         WL:ShowConfirmClearLoadouts()
     end)
 
-    -- Close button — right of the Clear button on the same row
+    -- Close button — floated to the right
     local doneBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     doneBtn:SetSize(80, 28)
-    doneBtn:SetPoint("LEFT", clearAllBtn, "RIGHT", 8, 0)
+    doneBtn:SetPoint("TOPRIGHT", f, "TOPRIGHT", -16, yPos)
     doneBtn:SetText("Close")
     doneBtn:SetScript("OnClick", function() f:Hide() end)
+
+    -- Resize frame to fit content snugly (yPos is at button top, + button height + padding)
+    f:SetSize(460, math.abs(yPos) + 28 + 12)
 
     toolsFrame = f
     f:Show()
@@ -399,50 +426,98 @@ end
 -- Refresh Tools Panel (update toggles, URLs for current spec)
 ----------------------------------------------------------------------
 
+-- Check if a talent string is importable (not a hash format, not a stub)
+local function IsTalentStringImportable(talentString)
+    if not talentString or talentString == "" then return false end
+    -- Icy Veins HB hash format starts with "#"
+    if talentString:sub(1, 1) == "#" then return false end
+    -- Murlok stubs are very short (<30 chars) and mostly AAAA-padded
+    if #talentString < 30 then return false end
+    return true
+end
+
 function WL:RefreshToolsPanel()
     if not toolsFrame then return end
 
     local allBuilds = self:GetAllBuildsForCurrentSpec()
     local sourceOrder = { "wowhead", "archon", "icyveins", "raiderio", "murlok" }
 
-    -- Update toggle checkboxes — auto-disable sources with no builds
-    if toolsFrame.toggleChecks then
-        for _, src in ipairs(sourceOrder) do
-            local check = toolsFrame.toggleChecks[src]
-            if check then
-                local builds = allBuilds[src]
-                local hasBuilds = builds and #builds > 0
-                check:SetChecked(WL:IsSourceEnabled(src))
-                check:SetEnabled(hasBuilds)
-                check:SetAlpha(hasBuilds and 1.0 or 0.4)
+    -- Update toggle checkboxes and status indicators
+    for _, src in ipairs(sourceOrder) do
+        local check = toolsFrame.toggleChecks and toolsFrame.toggleChecks[src]
+        local status = toolsFrame.statusFrames and toolsFrame.statusFrames[src]
+        local urlBox = toolsFrame.urlBoxes and toolsFrame.urlBoxes[src]
+        local builds = allBuilds[src]
+        local hasBuilds = builds and #builds > 0
+
+        -- Determine source status: missing / partial / ok
+        local isMissing = not hasBuilds
+        local isPartial = false
+
+        if hasBuilds then
+            local importable = 0
+            for _, build in ipairs(builds) do
+                if IsTalentStringImportable(build.talentString) then
+                    importable = importable + 1
+                end
+            end
+            -- Partial if some or all builds are non-importable
+            if importable < #builds then
+                isPartial = true
             end
         end
-    end
 
-    -- Update source URLs with spec-specific guide URLs
-    if toolsFrame.urlBoxes then
-        for _, src in ipairs(sourceOrder) do
-            local urlBox = toolsFrame.urlBoxes[src]
-            if urlBox then
-                local srcInfo = WL.SourceInfo[src]
-                local builds = allBuilds[src]
-                local hasBuilds = builds and #builds > 0
-                local bestUrl = (srcInfo and srcInfo.url) or ""
+        -- Update status indicator (M / P / blank)
+        if status then
+            if isMissing then
+                status.text:SetText("|cffff4444M|r")
+                status.tooltipTitle = "Missing"
+                status.tooltipBody = "No builds available from this source\nfor your current spec."
+                status:Show()
+            elseif isPartial then
+                status.text:SetText("|cffffcc00P|r")
+                status.tooltipTitle = "Partial"
+                status.tooltipBody = "Some builds from this source use a format\nthat cannot be directly imported in-game.\nThey are still shown but may require\nmanual copy from the source website."
+                status:Show()
+            else
+                status.text:SetText("")
+                status.tooltipTitle = nil
+                status.tooltipBody = nil
+                status:Hide()
+            end
+        end
 
-                -- Pick the first unique sourceUrl from builds for this source
-                if builds then
-                    for _, build in ipairs(builds) do
-                        if build.sourceUrl and build.sourceUrl ~= "" then
-                            bestUrl = build.sourceUrl
-                            break
-                        end
+        -- Update checkbox: missing sources get unchecked, all remain interactive
+        if check then
+            if isMissing then
+                check:SetChecked(false)
+                if WL.db and WL.db.settings and WL.db.settings.enabledSources then
+                    WL.db.settings.enabledSources[src] = false
+                end
+            else
+                check:SetChecked(WL:IsSourceEnabled(src))
+            end
+            check:SetEnabled(not isMissing)
+            check:SetAlpha(isMissing and 0.4 or 1.0)
+        end
+
+        -- Update source URL
+        if urlBox then
+            local srcInfo = WL.SourceInfo[src]
+            local bestUrl = (srcInfo and srcInfo.url) or ""
+
+            if builds then
+                for _, build in ipairs(builds) do
+                    if build.sourceUrl and build.sourceUrl ~= "" then
+                        bestUrl = build.sourceUrl
+                        break
                     end
                 end
-
-                urlBox.displayUrl = bestUrl
-                urlBox:SetText(bestUrl)
-                urlBox:SetAlpha(hasBuilds and 1.0 or 0.4)
             end
+
+            urlBox.displayUrl = bestUrl
+            urlBox:SetText(bestUrl)
+            urlBox:SetAlpha(isMissing and 0.4 or 1.0)
         end
     end
 
