@@ -1,5 +1,5 @@
 # WebLoadouts Changelog
-## Last Sync 2026-03-26 12:19 UTC from wow.xianith.com/webloadouts
+## Last Sync 2026-03-27 12:20 UTC from wow.xianith.com/webloadouts
 
 ## v0.1.2 (2026-03-14)
 
